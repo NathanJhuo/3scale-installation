@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: system-sidekiq
+  labels:
+    app: 3scale-api-management
+    threescale_component: system
+    threescale_component_element: sidekiq
+spec:
+  namespaceSelector: {}
+  podMetricsEndpoints:
+    - path: /metrics
+      port: metrics
+      scheme: http
+  selector:
+    matchLabels:
+      app: 3scale-api-management
+      threescale_component: system
+      threescale_component_element: sidekiq

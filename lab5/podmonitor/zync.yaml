@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: zync
+  labels:
+    app: 3scale-api-management
+    threescale_component: zync
+    threescale_component_element: zync
+spec:
+  namespaceSelector: {}
+  podMetricsEndpoints:
+    - path: /metrics
+      port: metrics
+      scheme: http
+  selector:
+    matchLabels:
+      app: 3scale-api-management
+      threescale_component: zync
+      threescale_component_element: zync

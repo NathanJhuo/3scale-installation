@@ -1,0 +1,63 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: zync-que
+  labels:
+    app: 3scale-api-management
+    prometheus: application-monitoring
+    role: alert-rules
+    threescale_component: zync
+spec:
+  groups:
+    - name: 3scale/zync-que.rules
+      rules:
+        - alert: ThreescaleZyncQueJobDown
+          annotations:
+            description: 'Job {{ $labels.job }} on {{ $labels.namespace }} is DOWN'
+            summary: 'Job {{ $labels.job }} on {{ $labels.namespace }} is DOWN'
+          expr: 'up{job=~".*/zync-que",namespace="3scale"} == 0'
+          for: 1m
+          labels:
+            severity: critical
+        - alert: ThreescaleZyncQueScheduledJobCountHigh
+          annotations:
+            description: >-
+              Job {{ $labels.job }} on {{ $labels.namespace }} has scheduled job
+              count over 100
+            summary: >-
+              Job {{ $labels.job }} on {{ $labels.namespace }} has scheduled job
+              count over 100
+          expr: >-
+            max(que_jobs_scheduled_total{pod=~'zync-que.*',type='scheduled',namespace="3scale"})
+            by (namespace,job,exported_job) > 250
+          for: 1m
+          labels:
+            severity: warning
+        - alert: ThreescaleZyncQueFailedJobCountHigh
+          annotations:
+            description: >-
+              Job {{ $labels.job }} on {{ $labels.namespace }} has failed job
+              count over 100
+            summary: >-
+              Job {{ $labels.job }} on {{ $labels.namespace }} has failed job
+              count over 100
+          expr: >-
+            max(que_jobs_scheduled_total{pod=~'zync-que.*',type='failed',namespace="3scale"})
+            by (namespace,job,exported_job) > 250
+          for: 1m
+          labels:
+            severity: warning
+        - alert: ThreescaleZyncQueReadyJobCountHigh
+          annotations:
+            description: >-
+              Job {{ $labels.job }} on {{ $labels.namespace }} has ready job
+              count over 100
+            summary: >-
+              Job {{ $labels.job }} on {{ $labels.namespace }} has ready job
+              count over 100
+          expr: >-
+            max(que_jobs_scheduled_total{pod=~'zync-que.*',type='ready',namespace="3scale"})
+            by (namespace,job,exported_job) > 250
+          for: 1m
+          labels:
+            severity: warning

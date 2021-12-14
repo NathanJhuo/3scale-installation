@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: apicast-production
+  labels:
+    app: 3scale-api-management
+    threescale_component: apicast
+    threescale_component_element: production
+spec:
+  namespaceSelector: {}
+  podMetricsEndpoints:
+    - path: /metrics
+      port: metrics
+      scheme: http
+  selector:
+    matchLabels:
+      app: 3scale-api-management
+      threescale_component: apicast
+      threescale_component_element: production

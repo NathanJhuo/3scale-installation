@@ -1,0 +1,34 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: system-app
+  labels:
+    app: 3scale-api-management
+    threescale_component: system
+    threescale_component_element: app
+spec:
+  namespaceSelector: {}
+  podMetricsEndpoints:
+    - path: /metrics
+      port: master-metrics
+      scheme: http
+    - path: /yabeda-metrics
+      port: master-metrics
+      scheme: http
+    - path: /metrics
+      port: prov-metrics
+      scheme: http
+    - path: /yabeda-metrics
+      port: prov-metrics
+      scheme: http
+    - path: /metrics
+      port: dev-metrics
+      scheme: http
+    - path: /yabeda-metrics
+      port: dev-metrics
+      scheme: http
+  selector:
+    matchLabels:
+      app: 3scale-api-management
+      threescale_component: system
+      threescale_component_element: app

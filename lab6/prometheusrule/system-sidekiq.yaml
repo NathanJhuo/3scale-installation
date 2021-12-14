@@ -1,0 +1,21 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: system-sidekiq
+  labels:
+    app: 3scale-api-management
+    prometheus: application-monitoring
+    role: alert-rules
+    threescale_component: system
+spec:
+  groups:
+    - name: 3scale/system-sidekiq.rules
+      rules:
+        - alert: ThreescaleSystemSidekiqJobDown
+          annotations:
+            description: 'Job {{ $labels.job }} on {{ $labels.namespace }} is DOWN'
+            summary: 'Job {{ $labels.job }} on {{ $labels.namespace }} is DOWN'
+          expr: 'up{job=~".*system-sidekiq.*",namespace="3scale"} == 0'
+          for: 1m
+          labels:
+            severity: critical

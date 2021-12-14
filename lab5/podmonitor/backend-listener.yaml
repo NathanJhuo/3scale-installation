@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: backend-listener
+  labels:
+    app: 3scale-api-management
+    threescale_component: backend
+    threescale_component_element: listener
+spec:
+  namespaceSelector: {}
+  podMetricsEndpoints:
+    - path: /metrics
+      port: metrics
+      scheme: http
+  selector:
+    matchLabels:
+      app: 3scale-api-management
+      threescale_component: backend
+      threescale_component_element: listener

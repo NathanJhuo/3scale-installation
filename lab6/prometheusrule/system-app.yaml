@@ -1,0 +1,35 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: system-app
+  labels:
+    app: 3scale-api-management
+    prometheus: application-monitoring
+    role: alert-rules
+    threescale_component: system
+spec:
+  groups:
+    - name: 3scale/system-app.rules
+      rules:
+        - alert: ThreescaleSystemApp5XXRequestsHigh
+          annotations:
+            description: >-
+              Job {{ $labels.job }} on {{ $labels.namespace }} has more than 50
+              HTTP 5xx requests in the last minute
+            summary: >-
+              Job {{ $labels.job }} on {{ $labels.namespace }} has more than 50
+              HTTP 5xx requests in the last minute
+          expr: >-
+            sum(rate(rails_requests_total{namespace="3scale",pod=~"system-app-[a-z0-9]+-[a-z0-9]+",status=~"5[0-9]*"}[1m]))
+            by (namespace,job) > 50
+          for: 1m
+          labels:
+            severity: warning
+        - alert: ThreescaleSystemAppJobDown
+          annotations:
+            description: 'Job {{ $labels.job }} on {{ $labels.namespace }} is DOWN'
+            summary: 'Job {{ $labels.job }} on {{ $labels.namespace }} is DOWN'
+          expr: 'up{job=~".*system-app.*",namespace="3scale"} == 0'
+          for: 1m
+          labels:
+            severity: critical
